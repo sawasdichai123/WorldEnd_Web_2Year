@@ -1,6 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { AnimatePresence } from 'framer-motion' // Need this for the modal animation
 import CharacterShowcase from './CharacterShowcase'
 import CyberGridBackground from './components/CyberGridBackground'
+import SubscriptionModal from './components/SubscriptionModal' // Import the modal
+import mvVideo from './assets/Mvtest.mp4'
 import './App.css'
 
 // ... (omitted Scroll logic) ...
@@ -8,6 +11,8 @@ import './App.css'
 // ... (ParticleBackground code removed or kept if you want to keep it as fallback, but for now I will assume we remove it or just don't use it)
 
 function App() {
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false) // Modal State
+
   // Scroll to top on page load/refresh
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -53,32 +58,38 @@ function App() {
       {/* Members Character Showcase */}
       <CharacterShowcase />
 
-      {/* Highlights Section */}
-      <section className="highlights">
+      {/* MV Showcase Section */}
+      <section className="mv-showcase">
         <div className="container">
-          <h2 className="section-title">Anniversary Contents</h2>
-          <div className="highlights-grid">
-            <div className="highlight-item large">
-              <div className="highlight-image placeholder-1"></div>
-              <div className="highlight-overlay">
-                <h3>World End MV Premiere</h3>
-                <p>The definitive musical experience</p>
-              </div>
+          <div className="mv-header">
+            <span className="mv-subtitle">Fanmade Music Video</span>
+            <h2 className="mv-title">Beyond the World End</h2>
+            <p className="mv-description">
+              Celebrate our 2nd Anniversary with the brand new fanmade song.
+              <br />A story of connection, dreams, and the future we build together.
+            </p>
+          </div>
+
+          <div className="video-frame-container">
+            <div className="video-frame">
+              {/* Local Video Player */}
+              <video
+                width="100%"
+                height="100%"
+                controls
+                poster={mvVideo} // Optional: use the video itself as poster or a separate image if available
+                style={{ objectFit: 'cover' }}
+              >
+                <source src={mvVideo} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
-            <div className="highlight-item">
-              <div className="highlight-image placeholder-2"></div>
-              <div className="highlight-overlay">
-                <h3>Virtual Exhibition</h3>
-                <p>Interactive 3D Gallery</p>
-              </div>
-            </div>
-            <div className="highlight-item">
-              <div className="highlight-image placeholder-3"></div>
-              <div className="highlight-overlay">
-                <h3>Live Concert</h3>
-                <p>Special Anniversary Performance</p>
-              </div>
-            </div>
+            {/* Decorative Cyberpunk Elements around frame */}
+            <div className="frame-corner top-left"></div>
+            <div className="frame-corner top-right"></div>
+            <div className="frame-corner bottom-left"></div>
+            <div className="frame-corner bottom-right"></div>
+            <div className="frame-glow"></div>
           </div>
         </div>
       </section>
@@ -113,7 +124,9 @@ function App() {
           <h2>Be Part of Our Journey</h2>
           <p>Subscribe and join our growing community for exclusive content and updates</p>
           <div className="cta-buttons">
-            <button className="btn btn-primary btn-large">Subscribe Now</button>
+            <button className="btn btn-primary btn-large" onClick={() => setShowSubscribeModal(true)}>
+              Subscribe Now
+            </button>
             <button className="btn btn-outline btn-large">Join Discord</button>
           </div>
         </div>
@@ -149,6 +162,11 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Subscription Modal Rendered Here */}
+      <AnimatePresence>
+        {showSubscribeModal && <SubscriptionModal onClose={() => setShowSubscribeModal(false)} />}
+      </AnimatePresence>
     </div>
   )
 }

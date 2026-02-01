@@ -52,11 +52,18 @@ const CountUp = ({ end, duration = 1500 }) => {
 
 const CharacterShowcase = () => {
     const [activeIndex, setActiveIndex] = useState(0)
-    const [isFading, setIsFading] = useState(false)
     const [realTimeStats, setRealTimeStats] = useState(null)
     const [selectedMember, setSelectedMember] = useState(null)
 
     const activeMember = members[activeIndex]
+
+    // Preload Images
+    useEffect(() => {
+        members.forEach(member => {
+            const img = new Image()
+            img.src = member.image
+        })
+    }, [])
 
     // Fetch YouTube Stats
     useEffect(() => {
@@ -77,12 +84,7 @@ const CharacterShowcase = () => {
     const currentStats = realTimeStats || (selectedMember ? selectedMember.stats : activeMember.stats);
 
     const changeMember = (newIndex) => {
-        if (newIndex === activeIndex || isFading) return
-        setIsFading(true)
-        setTimeout(() => {
-            setActiveIndex(newIndex)
-            setIsFading(false)
-        }, 300)
+        setActiveIndex(newIndex)
     }
 
     const nextMember = () => changeMember((activeIndex + 1) % members.length)
@@ -117,59 +119,73 @@ const CharacterShowcase = () => {
                                 </div>
 
                                 <div className="showcase-grid">
-                                    <div className={`character-stage ${isFading ? 'fade-out' : 'fade-in'}`}>
-                                        <div className="character-img-container" onClick={() => setSelectedMember(activeMember)} style={{ cursor: 'pointer' }}>
-                                            <motion.img
-                                                layoutId={`image-${activeMember.id}`}
-                                                src={activeMember.image}
-                                                alt={activeMember.name}
-                                                className="character-full-img"
-                                                whileHover={{ scale: 1.05, filter: "brightness(1.2)" }}
-                                                transition={{ duration: 0.3 }}
-                                            />
-                                            <motion.div
-                                                className="click-hint"
-                                                initial={{ opacity: 0, y: 10 }}
-                                                whileHover={{ opacity: 1, y: 0 }}
-                                                style={{
-                                                    position: 'absolute', bottom: '20px', left: '50%', translateX: '-50%',
-                                                    color: 'white', background: 'rgba(0,0,0,0.6)', padding: '5px 15px', borderRadius: '20px',
-                                                    fontSize: '0.8rem', pointerEvents: 'none'
-                                                }}
-                                            >
-                                                Click for Details
-                                            </motion.div>
-                                        </div>
-                                    </div>
-
-                                    <div className={`info-panel ${isFading ? 'fade-out' : 'fade-in'}`}>
-                                        <div className="info-header" style={{ color: activeMember.themeColor }}>
-                                            <motion.h2 layoutId={`title-${activeMember.id}`} style={{ textShadow: `0 0 30px ${activeMember.themeColor}50` }}>
-                                                {activeMember.name}
-                                            </motion.h2>
-                                            <span className="role-badge" style={{ borderColor: activeMember.themeColor, color: activeMember.themeColor }}>
-                                                {activeMember.role}
-                                            </span>
-                                        </div>
-
-                                        <p className="description">{activeMember.description}</p>
-
-                                        <div className="stats-box" style={{ '--theme-color': activeMember.themeColor, borderColor: `${activeMember.themeColor}40` }}>
-                                            <div className="stat-row">
-                                                <span className="stat-value"><CountUp key={activeMember.id + 'subs'} end={currentStats.subscribers} /></span>
-                                                <span className="stat-label">Subscribers</span>
+                                    <AnimatePresence mode="wait">
+                                        <div className="character-stage" key={activeMember.id}>
+                                            <div className="character-img-container" onClick={() => setSelectedMember(activeMember)} style={{ cursor: 'pointer' }}>
+                                                <motion.img
+                                                    layoutId={`image-${activeMember.id}`}
+                                                    src={activeMember.image}
+                                                    alt={activeMember.name}
+                                                    className="character-full-img"
+                                                    initial={{ opacity: 0, scale: 0.9, y: 30, filter: 'blur(10px)' }}
+                                                    animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+                                                    exit={{ opacity: 0, scale: 1.05, y: -20, filter: 'blur(10px)' }}
+                                                    transition={{ duration: 0.4, ease: "easeOut" }}
+                                                    whileHover={{ scale: 1.05, filter: "brightness(1.2)" }}
+                                                />
+                                                <motion.div
+                                                    className="click-hint"
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    whileHover={{ opacity: 1, y: 0 }}
+                                                    style={{
+                                                        position: 'absolute', bottom: '20px', left: '50%', translateX: '-50%',
+                                                        color: 'white', background: 'rgba(0,0,0,0.6)', padding: '5px 15px', borderRadius: '20px',
+                                                        fontSize: '0.8rem', pointerEvents: 'none'
+                                                    }}
+                                                >
+                                                    Click for Details
+                                                </motion.div>
                                             </div>
-                                            <div className="stat-row">
-                                                <span className="stat-value"><CountUp key={activeMember.id + 'views'} end={currentStats.views} /></span>
-                                                <span className="stat-label">Total Views</span>
-                                            </div>
-                                            <a href={`https://www.youtube.com/channel/${activeMember.channelId}`} target="_blank" rel="noopener noreferrer" className="yt-button"
-                                                style={{ backgroundColor: activeMember.themeColor, boxShadow: `0 10px 20px -5px ${activeMember.themeColor}60` }}
-                                            >
-                                                Subscribe
-                                            </a>
                                         </div>
-                                    </div>
+                                    </AnimatePresence>
+
+                                    <AnimatePresence mode="wait">
+                                        <motion.div
+                                            className="info-panel"
+                                            key={activeMember.id}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            transition={{ duration: 0.3, delay: 0.1 }}
+                                        >
+                                            <div className="info-header" style={{ color: activeMember.themeColor }}>
+                                                <motion.h2 layoutId={`title-${activeMember.id}`} style={{ textShadow: `0 0 30px ${activeMember.themeColor}50` }}>
+                                                    {activeMember.name}
+                                                </motion.h2>
+                                                <span className="role-badge" style={{ borderColor: activeMember.themeColor, color: activeMember.themeColor }}>
+                                                    {activeMember.role}
+                                                </span>
+                                            </div>
+
+                                            <p className="description">{activeMember.description}</p>
+
+                                            <div className="stats-box" style={{ '--theme-color': activeMember.themeColor, borderColor: `${activeMember.themeColor}40` }}>
+                                                <div className="stat-row">
+                                                    <span className="stat-value"><CountUp key={activeMember.id + 'subs'} end={currentStats.subscribers} /></span>
+                                                    <span className="stat-label">Subscribers</span>
+                                                </div>
+                                                <div className="stat-row">
+                                                    <span className="stat-value"><CountUp key={activeMember.id + 'views'} end={currentStats.views} /></span>
+                                                    <span className="stat-label">Total Views</span>
+                                                </div>
+                                                <a href={`https://www.youtube.com/channel/${activeMember.channelId}`} target="_blank" rel="noopener noreferrer" className="yt-button"
+                                                    style={{ backgroundColor: activeMember.themeColor, boxShadow: `0 10px 20px -5px ${activeMember.themeColor}60` }}
+                                                >
+                                                    Subscribe
+                                                </a>
+                                            </div>
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </div>
 
                                 <div className="nav-controls">
@@ -199,9 +215,11 @@ const CharacterShowcase = () => {
                                 }}
                             >
                                 <button className="close-btn" onClick={() => setSelectedMember(null)} style={{
-                                    position: 'absolute', top: '2rem', right: '2rem', zIndex: 10,
-                                    background: 'transparent', border: '1px solid white', color: 'white',
-                                    width: '50px', height: '50px', borderRadius: '50%', fontSize: '1.5rem', cursor: 'pointer'
+                                    position: 'fixed', top: '3rem', right: '3rem', zIndex: 110,
+                                    background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.3)', color: 'white',
+                                    width: '60px', height: '60px', borderRadius: '50%', fontSize: '2rem', cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    backdropFilter: 'blur(10px)', transition: 'all 0.3s ease'
                                 }}>×</button>
 
                                 <div className="detail-content container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', height: '80vh', alignItems: 'center' }}>
