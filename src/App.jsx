@@ -40,8 +40,7 @@ function App() {
 
           <p className="hero-description fade-in-up delay-2">
             Celebrating two years of imagination, creativity, and the virtual frontier.
-            <br />
-            Presented by VirtUp Entertainment.
+
           </p>
 
           <div className="hero-cta fade-in-up delay-3">
@@ -132,36 +131,7 @@ function App() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
-              <h3>World End</h3>
-              <p>Celebrating 2 years of amazing adventures together</p>
-            </div>
-            <div className="footer-section">
-              <h4>Quick Links</h4>
-              <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#highlights">Highlights</a></li>
-                <li><a href="#community">Community</a></li>
-              </ul>
-            </div>
-            <div className="footer-section">
-              <h4>Social Media</h4>
-              <ul>
-                <li><a href="#youtube">YouTube</a></li>
-                <li><a href="#twitter">Twitter</a></li>
-                <li><a href="#discord">Discord</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>&copy; 2026 World End. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+
 
       {/* Subscription Modal Rendered Here */}
       <AnimatePresence>
