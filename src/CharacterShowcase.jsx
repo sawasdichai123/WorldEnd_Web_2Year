@@ -228,7 +228,7 @@ const CharacterShowcase = () => {
                                             layoutId={`image-${selectedMember.id}`}
                                             src={selectedMember.image}
                                             alt={selectedMember.name}
-                                            style={{ maxHeight: '90%', maxWidth: '100%', filter: 'drop-shadow(0 0 30px rgba(0,0,0,0.5))' }}
+                                            style={{ width: 'auto', maxWidth: '100%', height: '100%', maxHeight: '100%', objectFit: 'contain', filter: 'drop-shadow(0 0 30px rgba(0,0,0,0.5))' }}
                                         />
                                     </div>
 
